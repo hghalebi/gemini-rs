@@ -13,7 +13,7 @@ A production-grade, fluent Rust SDK for the **Gemini Headless CLI**.
 ### Simple Text Query
 Perform a one-shot query and receive a raw string response.
 ```rust
-use gemini_rs::Gemini;
+use gemini_oxide::Gemini;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -29,7 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ### Structured Code Review
 Analyze local files with automated tool approval (YOLO mode) and structured statistics.
 ```rust
-use gemini_rs::Gemini;
+use gemini_oxide::Gemini;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -51,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ### Real-time Event Streaming
 Stream tokens and tool execution events in real-time.
 ```rust
-use gemini_rs::{Gemini, StreamEvent};
+use gemini_oxide::{Gemini, StreamEvent};
 use futures_util::StreamExt;
 
 #[tokio::main]

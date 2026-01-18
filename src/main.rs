@@ -1,4 +1,4 @@
-use gemini_rs::Gemini;
+use gemini_oxide::Gemini;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

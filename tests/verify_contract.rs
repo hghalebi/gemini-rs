@@ -1,4 +1,4 @@
-use gemini_rs::{Gemini, StreamEvent};
+use gemini_oxide::{Gemini, StreamEvent};
 use std::env;
 use std::path::PathBuf;
 use futures_util::StreamExt;

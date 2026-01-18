@@ -1,4 +1,4 @@
-use gemini_rs::Gemini;
+use gemini_oxide::Gemini;
 use std::env;
 use std::path::PathBuf;
 

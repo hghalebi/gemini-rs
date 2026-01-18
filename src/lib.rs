@@ -27,7 +27,7 @@
 //! ### Basic Text Query
 //! 
 //! ```rust,no_run
-//! use gemini_rs::Gemini;
+//! use gemini_oxide::Gemini;
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -44,7 +44,7 @@
 //! ### Code Analysis with File Context
 //! 
 //! ```rust,no_run
-//! use gemini_rs::Gemini;
+//! use gemini_oxide::Gemini;
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -63,12 +63,13 @@
 //! ### Real-time Streaming
 //! 
 //! ```rust,no_run
-//! use gemini_rs::{Gemini, StreamEvent};
+//! use gemini_oxide::{Gemini, StreamEvent};
 //! use futures_util::StreamExt;
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let mut stream = Gemini::new("Tell me a short story").stream().await?;
+//!     let stream = Gemini::new("Tell me a short story").stream().await?;
+//!     tokio::pin!(stream);
 //! 
 //!     while let Some(event) = stream.next().await {
 //!         match event? {
@@ -120,7 +121,7 @@ impl Gemini {
     /// # Example
     ///
     /// ```rust
-    /// use gemini_rs::Gemini;
+    /// use gemini_oxide::Gemini;
     /// let request = Gemini::new("Hello, world!");
     /// ```
     pub fn new(prompt: impl Into<String>) -> Self {
@@ -152,7 +153,7 @@ impl Gemini {
     /// # Example
     ///
     /// ```rust
-    /// # use gemini_rs::Gemini;
+    /// # use gemini_oxide::Gemini;
     /// let req = Gemini::new("Hi").model("gemini-1.5-pro");
     /// ```
     pub fn model(mut self, model: &str) -> Self {
