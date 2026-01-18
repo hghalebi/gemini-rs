@@ -20,6 +20,7 @@
 //! [dependencies]
 //! gemini-oxide = "0.1"
 //! tokio = { version = "1", features = ["full"] }
+//! futures = "0.3"
 //! ```
 //!
 //! ## Examples

@@ -11,7 +11,7 @@ A production-grade, fluent Rust SDK for the **Gemini Headless CLI**.
 ## Installation
 
 ```sh
-car go add gemini-oxide tokio futures
+cargo add gemini-oxide tokio futures
 ```
 
 ## Usage Examples
