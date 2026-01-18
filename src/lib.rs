@@ -1,6 +1,6 @@
-//! # gemini-rs
+//! # gemini-oxide
 //!
-//! `gemini-rs` is a production-grade, asynchronous Rust SDK for the Google Gemini Headless CLI.
+//! `gemini-oxide` is a production-grade, asynchronous Rust SDK for the Google Gemini Headless CLI.
 //!
 //! It abstracts away the complexity of process management, I/O piping, and JSON parsing,
 //! providing a fluent, type-safe interface for integrating Gemini AI models into your Rust applications.
@@ -14,11 +14,11 @@
 //!
 //! ## Getting Started
 //!
-//! Add `gemini-rs` to your `Cargo.toml`. You also need `tokio` as the async runtime.
+//! Add `gemini-oxide` to your `Cargo.toml`. You also need `tokio` as the async runtime.
 //!
 //! ```toml
 //! [dependencies]
-//! gemini-rs = "0.1"
+//! gemini-oxide = "0.1"
 //! tokio = { version = "1", features = ["full"] }
 //! ```
 //!
@@ -32,11 +32,28 @@
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let response = Gemini::new("What is the speed of light?")
-//!         .model("gemini-2.5-flash")
+//!         .model("gemini-2.0-flash")
 //!         .text()
 //!         .await?;
 //!     
 //!     println!("Response: {}", response);
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Python Code Generation
+//!
+//! ```rust,no_run
+//! use gemini_oxide::Gemini;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let prompt = "Write a Python function for factorial with type hints and docstrings";
+//!     let code = Gemini::new(prompt)
+//!         .text()
+//!         .await?;
+//!     
+//!     println!("{}", code);
 //!     Ok(())
 //! }
 //! ```
@@ -79,6 +96,23 @@
 //!             _ => {}
 //!         }
 //!     }
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Concurrent Execution
+//!
+//! ```rust,no_run
+//! use gemini_oxide::Gemini;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let task1 = Gemini::new("Explain Rust").text();
+//!     let task2 = Gemini::new("Explain Go").text();
+//!
+//!     let (res1, res2) = tokio::join!(task1, task2);
+//!     println!("Rust: {}", res1?);
+//!     println!("Go: {}", res2?);
 //!     Ok(())
 //! }
 //! ```

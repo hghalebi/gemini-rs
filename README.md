@@ -1,12 +1,18 @@
-# gemini-rs
+# gemini-oxide
 
 A production-grade, fluent Rust SDK for the **Gemini Headless CLI**.
 
 ## Overview
-`gemini-rs` provides a high-level, asynchronous interface to Google's Gemini models via the official CLI. It is designed with three core principles:
+`gemini-oxide` provides a high-level, asynchronous interface to Google's Gemini models via the official CLI. It is designed with three core principles:
 1.  **Fluency:** A builder pattern that reads like a natural English sentence.
 2.  **Robustness:** Uses background tasks for stdin/stdout piping to prevent deadlocks when processing large contexts.
 3.  **Type Safety:** Fully deserializes complex JSON outputs and streaming events into strong Rust structs.
+
+## Installation
+
+```sh
+car go add gemini-oxide tokio futures
+```
 
 ## Usage Examples
 
@@ -21,7 +27,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .text()
         .await?;
     
-    println!("{}", response); // "The capital of France is Paris."
+    println!("{response}"); // "The capital of France is Paris."
+    Ok(())
+}
+```
+
+### Python Code Generation
+Generate a Python function with specific requirements like type hints and docstrings.
+```rust
+use gemini_oxide::Gemini;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let prompt = "Write a Python function to calculate the factorial of a number. \
+                  Include type hints and a detailed Google-style docstring.";
+    
+    let code = Gemini::new(prompt)
+        .model("gemini-2.0-flash")
+        .text()
+        .await?;
+    
+    println!("{code}");
     Ok(())
 }
 ```
@@ -52,21 +78,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 Stream tokens and tool execution events in real-time.
 ```rust
 use gemini_oxide::{Gemini, StreamEvent};
-use futures_util::StreamExt;
+use futures::StreamExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = Gemini::new("Write a Fibonacci function in Python")
-        .stream()
-        .await?;
+    let stream = Gemini::new("Write a Fibonacci function in Python")
+        .stream()?;
+    
+    // Pinning is required for iteration
+    tokio::pin!(stream);
 
     while let Some(event) = stream.next().await {
         match event? {
             StreamEvent::Message { content, delta: Some(true), .. } => {
-                print!("{}", content); // Live typing effect
+                print!("{content}"); // Live typing effect
             }
             StreamEvent::ToolUse { tool_name, .. } => {
-                println!("\n[System] Using tool: {}", tool_name);
+                println!("\n[System] Using tool: {tool_name}");
             }
             StreamEvent::Result { .. } => {
                 println!("\n[System] Generation complete.");
@@ -75,6 +103,37 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     Ok(())
+}
+```
+
+### Concurrency Patterns
+
+#### Parallel Execution (Static)
+Use `tokio::join!` to run known tasks concurrently.
+```rust
+let task_a = Gemini::new("Explain A").text();
+let task_b = Gemini::new("Explain B").text();
+
+let (res_a, res_b) = tokio::join!(task_a, task_b);
+```
+
+#### Parallel Execution (Dynamic)
+Use `FuturesUnordered` for processing a list of items efficiently.
+```rust
+use futures::stream::{FuturesUnordered, StreamExt};
+
+let prompts = vec!["A", "B", "C"];
+let mut tasks = FuturesUnordered::new();
+
+for p in prompts {
+    tasks.push(async move {
+        let res = Gemini::new(p).text().await;
+        (p, res)
+    });
+}
+
+while let Some((prompt, res)) = tasks.next().await {
+    println!("{prompt}: {:?}", res);
 }
 ```
 
