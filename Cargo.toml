@@ -1,0 +1,22 @@
+[package]
+name = "gemini-rs"
+version = "0.1.0"
+edition = "2021"
+description = "A production-grade, fluent Rust SDK for the Google Gemini Headless CLI."
+license = "MIT"
+repository = "https://github.com/yourusername/gemini-rs"
+readme = "README.md"
+keywords = ["gemini", "ai", "llm", "google", "sdk"]
+categories = ["api-bindings", "asynchronous"]
+authors = ["Open Source Contributor"]
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+futures-util = "0.3"
+async-stream = "0.3"
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["full", "test-util"] }

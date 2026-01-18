@@ -1,0 +1,59 @@
+#!/bin/sh
+# Advanced mock for testing handling of streams, json, and errors
+
+# Read stdin to check for inputs if needed (not strict for this mock)
+# But we mostly check args.
+
+is_stream=false
+force_error=false
+bad_json=false
+prompt=""
+
+# Parse args
+while [ $# -gt 0 ]; do
+  case "$1" in
+    stream-json)
+      is_stream=true
+      shift
+      ;;
+    --prompt)
+      prompt="$2"
+      shift
+      shift
+      ;;
+    *)
+      # Check if it's the positional prompt (last arg usually, or mixed)
+      # simplified: assume any non-flag is part of prompt
+      if [ "${1#-}" = "$1" ]; then
+          prompt="$1"
+      fi
+      shift
+      ;;
+  esac
+done
+
+# Check trigger words in prompt
+if echo "$prompt" | grep -q "crash_it"; then
+    echo "Critical Failure" >&2
+    exit 1
+fi
+
+if echo "$prompt" | grep -q "bad_json"; then
+    echo "This is not json"
+    exit 0
+fi
+
+if [ "$is_stream" = true ]; then
+    echo '{"type":"init","session_id":"test-session","model":"mock-model","timestamp":"2024-01-01T00:00:00Z"}'
+    echo '{"type":"message","role":"model","content":"Hello","delta":true,"timestamp":"2024-01-01T00:00:01Z"}'
+    echo '{"type":"result","status":"complete","stats":{},"timestamp":"2024-01-01T00:00:02Z"}'
+else
+    echo '{
+        "response": "Mock response",
+        "stats": {
+            "models": {},
+            "tools": {"totalCalls": 1, "totalSuccess": 1, "totalFail": 0},
+            "files": {"totalLinesAdded": 0, "totalLinesRemoved": 0}
+        }
+    }'
+fi
